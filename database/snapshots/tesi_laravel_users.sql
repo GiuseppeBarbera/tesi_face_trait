@@ -1,0 +1,1 @@
+INSERT INTO tesi_laravel.users (id, name, email, email_verified_at, password, remember_token, created_at, updated_at) VALUES (1, 'Salvatore', 'leonidaxx90@hotmail.it', null, '$2y$10$10Y1cO2nYXXRvANHi8S8HuWfP/7blC18Ito7mjTMuTECGZuFcor62', null, '2019-05-30 14:57:53', '2019-05-30 14:57:53');
