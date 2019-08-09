@@ -1,3 +1,7 @@
+.container-shape{
+    overflow-y: scroll;
+    max-height: 300px;
+}
 .container-img {
     display: inline-block;
     position: relative;

@@ -29,15 +29,30 @@
                         </div>
 
                         @if (isset($project->subject()->get()[0]->path_image_front))
-                            <div class="col-md-4">
+                            <div class="col-md-4 container-shape">
                                 <div class="form-group">
                                     @foreach ($morphologiesType as $morphologyType)
+                                        @php
+                                            $varcheck = 0;
+                                        @endphp
+                                        @foreach($morphologyType->morphology()->get() as $morphology)
+                                            @if($morphology->type == 'cx')
+                                                @php
+                                                $varcheck++;
+                                                @endphp
+                                            @endif
+                                        @endforeach
+
+                                        @if($varcheck != 0 )
                                         <label for="select_morphology_type_front">{{$morphologyType->name}}</label>
                                         <div class="column">
                                             @foreach($morphologyType->morphology()->get() as $morphology)
-                                                <img class="draggable_front_creator shape" id="morph_front_{{$morphology->id}}" src="{{asset($morphology->path)}}">
+                                                @if($morphology->type == 'cx')
+                                                    <img class="draggable_front_creator shape" id="morph_front_{{$morphology->id}}" src="{{asset($morphology->path)}}">
+                                                @endif
                                             @endforeach
                                         </div>
+                                        @endif
                                     @endforeach
                                 </div>
 
@@ -118,15 +133,29 @@
                         </div>
 
                         @if (isset($project->subject()->get()[0]->path_image_profile))
-                            <div class="col-md-4">
+                            <div class="col-md-4 container-shape">
                                 <div class="form-group">
                                     @foreach ($morphologiesType as $morphologyType)
+                                        @php
+                                            $varcheck2 = 0;
+                                        @endphp
+                                        @foreach($morphologyType->morphology()->get() as $morphology)
+                                            @if($morphology->type == 'sx' || $morphology->type == 'dx')
+                                                @php
+                                                    $varcheck2++;
+                                                @endphp
+                                            @endif
+                                        @endforeach
+                                        @if($varcheck2 != 0)
                                         <label for="select_morphology_type_front">{{$morphologyType->name}}</label>
                                         <div class="column">
                                             @foreach($morphologyType->morphology()->get() as $morphology)
+                                                @if($morphology->type != 'cx')
                                                 <img class="draggable_profile_creator shape" id="morph_profile_{{$morphology->id}}" src="{{asset($morphology->path)}}">
+                                                @endif
                                             @endforeach
                                         </div>
+                                        @endif
                                     @endforeach
                                 </div>
 
