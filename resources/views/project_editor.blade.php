@@ -44,6 +44,7 @@
                                         @endforeach
 
                                         @if($varcheck != 0 )
+                                        <button id="magic_{{$morphologyType->id}}" disabled class="btn btn-primary magic">Check <i class="fas fa-magic"></i></button>
                                         <label for="select_morphology_type_front">{{$morphologyType->name}}</label>
                                         <div class="column">
                                             @foreach($morphologyType->morphology()->get() as $morphology)
