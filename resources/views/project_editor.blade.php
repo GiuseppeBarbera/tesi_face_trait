@@ -29,8 +29,8 @@
                         </div>
 
                         @if (isset($project->subject()->get()[0]->path_image_front))
-                            <div class="col-md-4 container-shape">
-                                <div class="form-group">
+                            <div class="col-md-4">
+                                <div class="form-group container-shape">
                                     @foreach ($morphologiesType as $morphologyType)
                                         @php
                                             $varcheck = 0;
@@ -133,8 +133,8 @@
                         </div>
 
                         @if (isset($project->subject()->get()[0]->path_image_profile))
-                            <div class="col-md-4 container-shape">
-                                <div class="form-group">
+                            <div class="col-md-4">
+                                <div class="form-group container-shape">
                                     @foreach ($morphologiesType as $morphologyType)
                                         @php
                                             $varcheck2 = 0;

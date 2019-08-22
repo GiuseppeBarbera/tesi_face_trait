@@ -1,5 +1,5 @@
 float[][] SobelX={{-1,-2,-1},{ 0, 0, 0},{  1, 2, 1}};
-
+                 
 float[][] SobelY={{ -1, 0, 1},{ -2, 0, 2},{ -1, 0, 1}};
 
 PImage img,morf;
@@ -21,14 +21,14 @@ PImage convertToImage(float F[][]){
   for(int i=0; i<R.width;i++){
     for(int j=0; j<R.height;j++){
       float tmp =constrain((F[j][i]),0,255);
-      R.set(i,j,color((tmp)));
+      R.set(i,j,color((tmp))); 
     }
   }
   return R;
 }
 
 float[][] convolution(PImage I, float[][] filter){
-  float[][] R=new float[I.height][I.width];
+  float[][] R=new float[I.height][I.width]; 
   int N=filter.length;
   int off=N/2;
   float res;
@@ -51,14 +51,14 @@ float[][] convolution(PImage I, float[][] filter){
 
 float shapeComparison(PImage img, PImage morf){
   PImage img2,img3,img4,img5,img6,img7,morf2,morf3,morf4,morf5,morf6;
-
+  
   img.resize(width/2,height/2);
   morf.resize(width/2,height/2);
   img.filter(GRAY);
   morf.filter(GRAY);
-
+  
   img2 = convertToImage(convolution(img,SobelX));
-  img3 = convertToImage(convolution(img,SobelY));
+  img3 = convertToImage(convolution(img,SobelY));  
   img4 = img.copy();
   img5 = img.copy();
   img6 = img.copy();
@@ -68,29 +68,29 @@ float shapeComparison(PImage img, PImage morf){
   morf4 = morf.copy();
   morf5 = morf.copy();
   morf6 = morf.copy();
-
+  
   //Binarizzazione img2 ( SobelX di img) = img4
    for(int i = 0; i < img2.pixels.length; i++){
     if(green(img2.pixels[i]) > soglia) img4.pixels[i] = color(255);
     else img4.pixels[i] = color(0);
   }
-
+  
   //Binarizzazione img3 ( SobelY di img) = im5
   for(int i = 0; i < img3.pixels.length; i++){
     if(green(img3.pixels[i]) > soglia) img5.pixels[i] = color(255);
     else img5.pixels[i] = color(0);
   }
-
-  // Somma img4(SobelX di img Binarizzato )  + img5 (SobelY di img Binarizzato )  = img6
+   
+  // Somma img4(SobelX di img Binarizzato )  + img5 (SobelY di img Binarizzato )  = img6 
   for(int i = 0; i < img6.pixels.length; i++){
     img6.pixels[i] = color(green(img4.pixels[i]) + green(img5.pixels[i]));
   }
-
+  
   //Negativo di img6 = img7
   for(int i = 0; i < img7.pixels.length; i++){
     img7.pixels[i] = color( 255- green(img6.pixels[i]));
   }
-
+  
   //Binarizzazione morf2 ( SobelX di morf )  = morf4
   for(int i = 0; i < morf2.pixels.length;i++){
     if(green(morf2.pixels[i]) > soglia) morf4.pixels[i] = color(255);
@@ -107,14 +107,14 @@ float shapeComparison(PImage img, PImage morf){
   }
   //Creo array di dimensione = a morf6
   int array[] = new int[morf6.pixels.length];
-
+  
   //Inserisco nell'array la differenza in valore assoluto tra morf6 e img6 pixel per pixel in ordine
   for(int i = 0; i < morf6.pixels.length; i++){
     array[i] = int( abs(green(morf6.pixels[i]) - green(img6.pixels[i])));
   }
-
+  
   float media = 0;
-
+  
   //Sommo tutti i valori dell'array;
   for(int i = 0; i < morf6.pixels.length; i++){
     media+= array[i];

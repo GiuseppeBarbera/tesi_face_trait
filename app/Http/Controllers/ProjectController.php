@@ -264,5 +264,14 @@ class ProjectController extends Controller
         }
     }
 
+    public function myScript(Request $request){
+
+        $cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run /Users/Peppe/Desktop/Tes/Img/Front.jpg /Users/Peppe/Desktop/Tes/Morfologie\ Modificate/Attaccatura\ dei\ capelli/Soggetti\ privi\ di\ \ Trichion/attaccatura_curvilinea.png";
+        $response = shell_exec ( $cmd);
+      //  var_dump($response);
+        $response = explode("\n", $response)[0];
+        return $response;
+    }
+
 
 }

@@ -393,6 +393,7 @@ function createShape(shapeId, shapeInfo, event, type){
     newDraggableShape.resizable({
         //aspectRatio: 1/1,
         handles: "s,e,se",
+        aspectRatio: true,
         stop: function(event, ui) {
             var w = ui.size.width;
             var h = ui.size.height;

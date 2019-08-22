@@ -2,12 +2,11 @@
 <html>
 <body>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+<h1></h1>
+<p></p>
 
 </body>
 </html>
 
 <script>
-    alert("Ciao io giro sul browser!");
 </script>
