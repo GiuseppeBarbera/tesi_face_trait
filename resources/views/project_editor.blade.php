@@ -44,12 +44,12 @@
                                         @endforeach
 
                                         @if($varcheck != 0 )
-                                        <button id="magic_{{$morphologyType->id}}" disabled class="btn btn-primary magic">Check <i class="fas fa-magic"></i></button>
+                                        <button id="magic_front_{{$morphologyType->id}}" data-morph-type-id="{{$morphologyType->id}}" class="btn btn-primary magic_front">Check <i class="fas fa-magic"></i></button>
                                         <label for="select_morphology_type_front">{{$morphologyType->name}}</label>
                                         <div class="column">
                                             @foreach($morphologyType->morphology()->get() as $morphology)
                                                 @if($morphology->type == 'cx')
-                                                    <img class="draggable_front_creator shape" id="morph_front_{{$morphology->id}}" src="{{asset($morphology->path)}}">
+                                                    <img class="draggable_front_creator shape" title="{{$morphology->description}}" data-morph="{{$morphology->id}}" data-morph-type="{{$morphologyType->id}}" data-linked-to="{{$morphology->linked_to}}" id="morph_front_{{$morphology->id}}" src="{{asset($morphology->path)}}">
                                                 @endif
                                             @endforeach
                                         </div>
@@ -85,8 +85,9 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div id="action_bar_save_front" class="col-md-3">
+                            <div id="action_bar_front" class="col-md-3">
                                 <button id="save_front_metadata" class="btn btn-primary"><i class="far fa-save"></i> Save</button>
+                                <button id="report_front" class="btn btn-primary"><i class="far fa-save"></i> Report</button>
                             </div>
                         </div>
                     @endif
@@ -148,11 +149,12 @@
                                             @endif
                                         @endforeach
                                         @if($varcheck2 != 0)
-                                        <label for="select_morphology_type_front">{{$morphologyType->name}}</label>
+                                            <button id="magic_profile_{{$morphologyType->id}}" data-morph-type-id="{{$morphologyType->id}}" class="btn btn-primary magic_profile">Check <i class="fas fa-magic"></i></button>
+                                            <label for="select_morphology_type_profile">{{$morphologyType->name}}</label>
                                         <div class="column">
                                             @foreach($morphologyType->morphology()->get() as $morphology)
                                                 @if($morphology->type != 'cx')
-                                                <img class="draggable_profile_creator shape" id="morph_profile_{{$morphology->id}}" src="{{asset($morphology->path)}}">
+                                                <img class="draggable_profile_creator shape" title="{{$morphology->description}}" data-morph="{{$morphology->id}}" data-morph-type="{{$morphologyType->id}}" data-linked-to="{{$morphology->linked_to}}" id="morph_profile_{{$morphology->id}}" src="{{asset($morphology->path)}}">
                                                 @endif
                                             @endforeach
                                         </div>
@@ -190,6 +192,7 @@
                         <div class="row mt-3">
                             <div id="action_bar_profile_save" class="col-md-3">
                                 <button id="save_profile_metadata" class="btn btn-primary"><i class="far fa-save"></i> Save</button>
+                                <button id="report_profile" class="btn btn-primary"><i class="far fa-save"></i> Report</button>
                             </div>
                         </div>
                     @endif
@@ -232,6 +235,7 @@
     <script type="text/javascript" src="{{ asset('js/editor.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/jquery-ui.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/jquery.ui.rotatable.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/htmlToCanvas.js') }}"></script>
 @endsection
 
 @section('css')

@@ -1,3 +1,10 @@
+//TODO
+//leftFront = $('#drag_1566524115341').children('.shape').children('.ui-wrapper').offset().left - $('#front_img').offset().left;
+//topFront = $('#drag_1566524115341').children('.shape').children('.ui-wrapper').offset().top - $('#front_img').offset().top;
+//leftFront = leftFront * actualZoomFront;
+//topFront = topFront * actualZoomFront;
+//
+
 var selectedTab = 'front';
 //front variable
 var actualDegreeFront = 0;//degree front image
@@ -6,6 +13,7 @@ var actualXpositionFront = 0;//position x front image
 var actualYpositionFront = 0;//position y front image
 var globalTransformStringFront = "translate(0px,0px) scale(1.0) rotate(0deg)"; //default string css, help me to set a default value
 var listShapeFront = {}; //list of shapes front (shape is an element which can be positioned upon image
+var listShapeFrontByType = {};
 
 //profile variable
 var actualDegreeProfile = 0;
@@ -14,6 +22,7 @@ var actualXpositionProfile = 0;
 var actualYpositionProfile = 0;
 var globalTransformStringProfile = "translate(0px,0px) scale(1.0) rotate(0deg)";
 var listShapeProfile = {};
+var listShapeProfileByType = {};
 
 //shared variable
 var rotateString = "rotate($$DEGREE$$deg)";//this is string with naming convention to help me to create css string. I just replace $$DEGREE$$ with a value
@@ -143,6 +152,16 @@ $('#save_profile_metadata').on('click', function(event){
     onSaveAction(this, event, 'profile')
 });
 
+//event fired when click check button
+$( ".magic_profile" ).click(function(event) {
+    onCheckMagicAction(this, event, 'profile', $(event.currentTarget).data('morph-type-id'));
+});
+
+//event fired when click check button
+$( ".magic_front" ).click(function(event) {
+    onCheckMagicAction(this, event, 'front', $(event.currentTarget).data('morph-type-id'));
+});
+
 //rotate image identified from 'idImg' of angle 'degree'
 function rotate(idImg, degree){
     //rotate(13deg)
@@ -198,8 +217,6 @@ function applyTransformCss(idImg, globalTransformString) {
 function setPositionShape(shapeId, top, left) {
     var element = $('#' + shapeId);
     element.css({'top': parseFloat(top), 'left' : parseFloat(left), position : 'absolute'});
-
-
 }
 
 //retry metadata helpful to reposition the shapes
@@ -320,32 +337,103 @@ function onSaveAction(obj, event, type){
     })
 }
 
+function onCheckMagicAction(obj, event, type, morphTypeId){
+    event.preventDefault();
+    var idProject = $("#project_id").val();
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $("#csrf_token").val()
+        }
+    });
+debugger;
+    if(type == 'front') {
+        var listShape = listShapeFrontByType[morphTypeId];
+        var listShapeOfficial = listShapeFront;
+    }else if(type == 'profile'){
+        var listShape = listShapeProfileByType[morphTypeId];
+        var listShapeOfficial = listShapeProfile;
+    }
+
+    var listDuplicate = new Array();
+    var listAux = new Array();
+    for (var k in listShape){
+        if(listDuplicate[listShape[k].linked_to] == undefined) {
+            listDuplicate[listShape[k].linked_to] = 1;
+            listAux.push(k);
+        }
+    }
+
+    //retry element from official list
+    var sendList = new Array();
+    for(var i in listAux) {
+        for (var k in listShapeOfficial) {
+            if (listAux[i] == listShapeOfficial[k].id_shape) {
+                sendList[k] = listShapeOfficial[k];
+            }
+        }
+    }
+
+    var data = {
+        listShapes : sendList, type : type
+    };
+
+    $.ajax({
+        url:"../../check/" + idProject,
+        method:"POST",
+        data: data,
+        processData: true,
+        success:function(data)
+        {
+            alert("Data saved correctly");
+        }
+    })
+}
+
 function createShape(shapeId, shapeInfo, event, type){
+
     var newWrapperImg = $('<div></div>', {
         class : "shape"
     });
 
     if(event != undefined){
         var imgSrc = $(event.currentTarget).attr('src');
+        var description = $(event.currentTarget).attr('title');
     }else{
         var imgSrc = $('#morph_' + type + '_' + shapeInfo.id_shape).attr('src');
+        var description = $('#morph_' + type + '_' + shapeInfo.id_shape).attr('title');
     }
     var newDraggableShape = $('<img/>', {
         class : "shape img-shape",
-        src : imgSrc
+        src : imgSrc,
+        title : description
     });
-
-    $(newWrapperImg).prepend(newDraggableShape)
 
     if(shapeId == undefined) {
         var id = "drag_" + new Date().getTime();
+        var morphTypeId = $(event.currentTarget).data('morph-type');
+        var morphId = $(event.currentTarget).data('morph');
     }else{
         var id = shapeId;
+        var morphTypeId = shapeInfo.morph_type_id;
+        var morphId = shapeInfo.morph_id;
     }
+
+    //check if shape already added
+    var auxList = type == 'front' ? listShapeFront : listShapeProfile;
+    for (var k in auxList){
+        if(auxList[k].morph_id == morphId){
+            alert("Cannot add a duplicate elemente. It already exist on workspace!");
+            return;
+        }
+    };
+
+    $(newWrapperImg).prepend(newDraggableShape)
 
     var newDraggableDiv = $('<div></div>', {
         class : "draggable " + type,
-        id : id
+        id : id,
+        "data-morph-type-id" : morphTypeId,
+        "data-morph-id" : morphId
     }).draggable({
         //this will be executed when element will be translated
         drag: function() {
@@ -360,13 +448,31 @@ function createShape(shapeId, shapeInfo, event, type){
                 if (listShapeFront[id] != undefined) {
                     listShapeFront[id].x = xPos;
                     listShapeFront[id].y = yPos;
+
+                    //coordinates respect image
+                    leftFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#front_img').offset().left;
+                    topFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#front_img').offset().top;
+                    leftFront = leftFront * actualZoomFront;
+                    topFront = topFront * actualZoomFront;
+                    listShapeFront[id].left = leftFront;
+                    listShapeFront[id].top = topFront;
                 }
             }else if(classes.includes('profile')){
                 if (listShapeProfile[id] != undefined) {
                     listShapeProfile[id].x = xPos;
                     listShapeProfile[id].y = yPos;
+
+                    //coordinates respect image
+                    leftProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#profile_img').offset().left;
+                    topProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#profile_img').offset().top;
+                    leftProfile = leftFront * actualZoomProfile;
+                    topProfile = topProfile * actualZoomProfile;
+                    listShapeProfile[id].left = leftProfile;
+                    listShapeProfile[id].top = topProfile;
                 }
             }
+
+
 
         }
     });
@@ -445,14 +551,43 @@ function createShape(shapeId, shapeInfo, event, type){
 
     if(event != undefined){
         var idShape = $(event.currentTarget).attr('id').split('_')[2];
+        var morphTypeId = $(event.currentTarget).data('morph-type')+'';
+        var morphId = $(event.currentTarget).data('morph')+'';
+        var linkedTo = $(event.currentTarget).data('linked-to');
+        var description = $(event.currentTarget).attr('title');
     }else{
         var idShape = shapeInfo.id_shape;
+        var morphTypeId = shapeInfo.morph_type_id+'';
+        var morphId = shapeInfo.morph_id+'';
+        var linkedTo = shapeInfo.linked_to;
+        var description = shapeInfo.description;
     }
 
     if(type == 'front') {
-        listShapeFront[id] = {x: xPos, y: yPos, degree: parseFloat(degree), h: h, w: w, id_shape: idShape};
+        listShapeFront[id] = {x: xPos, y: yPos, degree: parseFloat(degree), h: h, w: w, id_shape: idShape, morph_type_id : morphTypeId, linked_to : linkedTo, morph_id : morphId};
+
+        var count = listShapeFrontByType[morphTypeId] != undefined && listShapeFrontByType[morphTypeId].count != undefined ? listShapeFrontByType[morphTypeId].count +1 : 1;
+        if(listShapeFrontByType[morphTypeId] == undefined){
+            listShapeFrontByType[morphTypeId] = new Array();
+            listShapeFrontByType[morphTypeId][idShape] = {linked_to : linkedTo};
+        }else{
+            listShapeFrontByType[morphTypeId][idShape] = {linked_to : linkedTo};
+        }
+
+        listShapeFrontByType[morphTypeId].count = count;
     }else if(type == 'profile'){
-        listShapeProfile[id] = {x: xPos, y: yPos, degree: parseFloat(degree), h: h, w: w, id_shape: idShape};
+        listShapeProfile[id] = {x: xPos, y: yPos, degree: parseFloat(degree), h: h, w: w, id_shape: idShape, morph_type_id : morphTypeId, linked_to : linkedTo, morph_id : morphId};
+
+        var count = listShapeProfileByType[morphTypeId] != undefined && listShapeProfileByType[morphTypeId].count != undefined  ? listShapeProfileByType[morphTypeId].count +1 : 1;
+        if(listShapeProfileByType[morphTypeId] == undefined){
+            listShapeProfileByType[morphTypeId] = new Array();
+            listShapeProfileByType[morphTypeId][idShape] = {linked_to : linkedTo};
+        }else{
+            listShapeProfileByType[morphTypeId][idShape] = {linked_to : linkedTo};
+        }
+
+        listShapeProfileByType[morphTypeId].count = count;
+
     }
 
     newWrapperImg.rotatable({angle : parseFloat(degree)});
@@ -462,10 +597,16 @@ function createShape(shapeId, shapeInfo, event, type){
 //delete shape from page and from variable list
 function deleteShape(event, type) {
     var id = $(event.currentTarget).parent().attr('id');
+    var morphTypeId = $(event.currentTarget).parent().data('morph-type-id')+'';
+    var morphId = $(event.currentTarget).parent().data('morph-id')+'';
     $(event.currentTarget).parent().remove();
     if(type == 'front') {
         delete listShapeFront[id];
+        delete listShapeFrontByType[morphTypeId][morphId];
+        listShapeFrontByType[morphTypeId].count = listShapeFrontByType[morphTypeId].count -1;
     }else if(type == 'profile'){
         delete listShapeProfile[id];
+        delete listShapeProfileByType[morphTypeId][morphId];
+        listShapeProfileByType[morphTypeId].count = listShapeProfileByType[morphTypeId].count -1;
     }
 }

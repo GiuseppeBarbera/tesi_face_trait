@@ -39,4 +39,4 @@ Route::post('projects/{id}/save/{type}', 'ProjectController@saveMetadata')->midd
 
 Route::get('addMorphology', 'ProjectController@myScript');
 
-Route::get('testScript','ProjectController@myScript');
+Route::post('check/{id}','ProjectController@magicCheck');

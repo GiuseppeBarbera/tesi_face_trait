@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use function PHPSTORM_META\type;
 
 class ProjectController extends Controller
 {
@@ -264,13 +265,32 @@ class ProjectController extends Controller
         }
     }
 
-    public function myScript(Request $request){
+    public function magicCheck(Request $request, $id){
 
-        $cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run /Users/Peppe/Desktop/Tes/Img/Front.jpg /Users/Peppe/Desktop/Tes/Morfologie\ Modificate/Attaccatura\ dei\ capelli/Soggetti\ privi\ di\ \ Trichion/attaccatura_curvilinea.png";
-        $response = shell_exec ( $cmd);
-      //  var_dump($response);
-        $response = explode("\n", $response)[0];
-        return $response;
+        $idProject = $id;
+        $project = Project::find($idProject);
+        $subject = $project->subject()->get()[0];
+        $type = $request->type;
+
+        if($type == 'front'){
+            $pathImage = $subject->path_image_front;
+        }else if($type == 'profile'){
+            $pathImage = $subject->path_image_profile;
+        }
+
+        foreach ($request->listShapes as $shape){
+            $pathShape = url(Morphology::find($shape['id_shape'])->path);
+        }
+
+
+
+
+
+        //$cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run /Users/Peppe/Desktop/Tes/Img/Front.jpg /Users/Peppe/Desktop/Tes/Morfologie\ Modificate/Attaccatura\ dei\ capelli/Soggetti\ privi\ di\ \ Trichion/attaccatura_curvilinea.png";
+        //$response = shell_exec ( $cmd);
+        ////var_dump($response);
+        //$response = explode("\n", $response)[0];
+        //return $response;
     }
 
 
