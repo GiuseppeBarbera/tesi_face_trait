@@ -162,6 +162,28 @@ $( ".magic_front" ).click(function(event) {
     onCheckMagicAction(this, event, 'front', $(event.currentTarget).data('morph-type-id'));
 });
 
+
+
+function generateReport(idProject, type){
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $("#csrf_token").val()
+        }
+    });
+
+    $.ajax({
+        url:"../../projects/" + idProject + "/report/" + type,
+        method:"GET",
+        processData: true,
+        success:function(data)
+        {
+            alert(data);
+        }
+    })
+}
+
+
+
 //rotate image identified from 'idImg' of angle 'degree'
 function rotate(idImg, degree){
     //rotate(13deg)
@@ -345,7 +367,7 @@ function onCheckMagicAction(obj, event, type, morphTypeId){
             'X-CSRF-TOKEN': $("#csrf_token").val()
         }
     });
-debugger;
+
     if(type == 'front') {
         var listShape = listShapeFrontByType[morphTypeId];
         var listShapeOfficial = listShapeFront;

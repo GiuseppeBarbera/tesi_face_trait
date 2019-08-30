@@ -87,7 +87,7 @@
                         <div class="row mt-3">
                             <div id="action_bar_front" class="col-md-3">
                                 <button id="save_front_metadata" class="btn btn-primary"><i class="far fa-save"></i> Save</button>
-                                <button id="report_front" class="btn btn-primary"><i class="far fa-save"></i> Report</button>
+                                <a class='report' href="../../projects/{{$project->id}}/report">Download Report</a>
                             </div>
                         </div>
                     @endif
@@ -192,7 +192,7 @@
                         <div class="row mt-3">
                             <div id="action_bar_profile_save" class="col-md-3">
                                 <button id="save_profile_metadata" class="btn btn-primary"><i class="far fa-save"></i> Save</button>
-                                <button id="report_profile" class="btn btn-primary"><i class="far fa-save"></i> Report</button>
+                                <a class='report' href="../../projects/{{$project->id}}/report">Download Report</a>
                             </div>
                         </div>
                     @endif

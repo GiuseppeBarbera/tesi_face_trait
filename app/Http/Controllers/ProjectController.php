@@ -6,11 +6,13 @@ use App\Morphology;
 use App\MorphologyType;
 use App\Project;
 use App\Subject;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use function PHPSTORM_META\type;
+use PHPUnit\Util\Json;
 
 class ProjectController extends Controller
 {
@@ -291,6 +293,99 @@ class ProjectController extends Controller
         ////var_dump($response);
         //$response = explode("\n", $response)[0];
         //return $response;
+    }
+
+    public function generateReport(Request $request, $id){
+
+        $project = Project::find($id);
+        $subject = $project->subject()->get()[0];
+
+        //info subject
+        $name = $subject->name;
+        $surname = $subject->surname;
+        $age = $subject->age;
+
+        //info project
+        $createdAt = $project->created_at->toDayDateTimeString();
+        $prjName = $project->name;
+        $prjDesc = $project->description;
+
+        //analize metadata json
+        $prjMetadata = json_decode($project->metadata);
+        $prjMetadataFront = $prjMetadata->transform_front;
+
+        //image x transl
+        $imageXFront = $prjMetadataFront->x;
+
+        //image y transl
+        $imageYFront = $prjMetadataFront->y;
+
+        //image zoom
+        $imageZoomFront = $prjMetadataFront->zoom;
+
+        //image zoom
+        $imageDegreeFront = $prjMetadataFront->degree;
+
+        $listShapeFront = [];
+        foreach ($prjMetadataFront->shapes as $shape){
+            $morph_id = $shape->morph_id;
+            $morphology = Morphology::find($morph_id);
+            $morphologyDesc = $morphology->description;
+            $morphologyTypeName = $morphology->morphologyType()->get()[0]->name;
+
+            $obj = new stdClass();
+            $obj->morphId = $morph_id;
+            $obj->$morphologyDesc;
+            $obj->$morphologyTypeName;
+
+            $listShapeFront[] = $obj;
+        }
+
+
+
+        $prjMetadataProfile = $prjMetadata->transform_profile;
+
+        //image x transl
+        $imageXProfile = $prjMetadataFront->x;
+
+        //image y transl
+        $imageYProfile = $prjMetadataFront->y;
+
+        //image zoom
+        $imageZoomProfile = $prjMetadataFront->zoom;
+
+        //image zoom
+        $imageDegreeProfile = $prjMetadataFront->degree;
+
+        $listShapeProfile = [];
+        foreach ($prjMetadataFront->shapes as $shape){
+            $morph_id = $shape->morph_id;
+            $morphology = Morphology::find($morph_id);
+            $morphologyDesc = $morphology->description;
+            $morphologyTypeName = $morphology->morphologyType()->get()[0]->name;
+
+            $obj = new stdClass();
+            $obj->morphId = $morph_id;
+            $obj->$morphologyDesc;
+            $obj->$morphologyTypeName;
+
+            $listShapeFront[] = $obj;
+        }
+
+
+        $data = [
+            'title' => 'Report',
+            'heading' => 'Report: ' . $prjName,
+            'prjDesc' => $prjDesc,
+            'listShapeFront' => $listShapeFront,
+            'listShapeProfile' => $listShapeProfile
+
+        ];
+
+        $pdf = PDF::loadView('report', $data);
+        return $pdf->download('medium.pdf');
+
+
     }
 
 
