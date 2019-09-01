@@ -304,6 +304,8 @@ class ProjectController extends Controller
         $name = $subject->name;
         $surname = $subject->surname;
         $age = $subject->age;
+        $pathImageFront = $subject->path_image_front;
+        $pathImageProfile = $subject->path_image_profile;
 
         //info project
         $createdAt = $project->created_at->toDayDateTimeString();
@@ -327,18 +329,22 @@ class ProjectController extends Controller
         $imageDegreeFront = $prjMetadataFront->degree;
 
         $listShapeFront = [];
-        foreach ($prjMetadataFront->shapes as $shape){
-            $morph_id = $shape->morph_id;
-            $morphology = Morphology::find($morph_id);
-            $morphologyDesc = $morphology->description;
-            $morphologyTypeName = $morphology->morphologyType()->get()[0]->name;
+        if(isset($prjMetadataFront->shapes)) {
+            foreach ($prjMetadataFront->shapes as $shape) {
+                $morph_id = $shape->morph_id;
+                $morphology = Morphology::find($morph_id);
+                $morphologyDesc = $morphology->description;
+                $morphologyPath = $morphology->path;
+                $morphologyTypeName = $morphology->morphologyType()->get()[0]->name;
 
-            $obj = new stdClass();
-            $obj->morphId = $morph_id;
-            $obj->$morphologyDesc;
-            $obj->$morphologyTypeName;
+                $obj = new \stdClass();
+                $obj->morphId = $morph_id;
+                $obj->morphologyDesc = $morphologyDesc;
+                $obj->morphologyTypeName = $morphologyTypeName;
+                $obj->morphologyPath = $morphologyPath;
 
-            $listShapeFront[] = $obj;
+                $listShapeFront[] = $obj;
+            }
         }
 
 
@@ -358,26 +364,49 @@ class ProjectController extends Controller
         $imageDegreeProfile = $prjMetadataFront->degree;
 
         $listShapeProfile = [];
-        foreach ($prjMetadataFront->shapes as $shape){
-            $morph_id = $shape->morph_id;
-            $morphology = Morphology::find($morph_id);
-            $morphologyDesc = $morphology->description;
-            $morphologyTypeName = $morphology->morphologyType()->get()[0]->name;
+        if(isset($prjMetadataProfile->shapes)) {
+            foreach ($prjMetadataProfile->shapes as $shape) {
+                $morph_id = $shape->morph_id;
+                $morphology = Morphology::find($morph_id);
+                $morphologyDesc = $morphology->description;
+                $morphologyPath = $morphology->path;
+                $morphologyTypeName = $morphology->morphologyType()->get()[0]->name;
 
-            $obj = new stdClass();
-            $obj->morphId = $morph_id;
-            $obj->$morphologyDesc;
-            $obj->$morphologyTypeName;
+                $obj = new \stdClass();
+                $obj->morphId = $morph_id;
+                $obj->morphologyDesc = $morphologyDesc;
+                $obj->morphologyTypeName = $morphologyTypeName;
+                $obj->morphologyPath = $morphologyPath;
 
-            $listShapeFront[] = $obj;
+
+                $listShapeProfile[] = $obj;
+            }
         }
 
 
         $data = [
+            //project info
             'title' => 'Report',
-            'heading' => 'Report: ' . $prjName,
+            'prjName' => $prjName,
             'prjDesc' => $prjDesc,
+            'prjCreatedAt' => $createdAt,
+            //subject info
+            'sbjName' => $name,
+            'sbjSurname' => $surname,
+            'sbjAge' => $age,
+            //front info
+            'srcFrontImage' => $pathImageFront,
+            'frontTransationX' => $imageXFront,
+            'frontTransationY' => $imageYFront,
+            'frontRotation' => $imageDegreeFront,
+            'frontScale' => $imageZoomFront,
             'listShapeFront' => $listShapeFront,
+            //profile info
+            'srcProfileImage' => $pathImageProfile,
+            'profileTransationX' => $imageXProfile,
+            'profileTransationY' => $imageYProfile,
+            'profileRotation' => $imageDegreeProfile,
+            'profileScale' => $imageZoomProfile,
             'listShapeProfile' => $listShapeProfile
 
         ];
