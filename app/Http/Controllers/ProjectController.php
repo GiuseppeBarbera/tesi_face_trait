@@ -63,6 +63,28 @@ class ProjectController extends Controller
         $project->id_subject = $subject->id;
         $project->name = $request->project_name;
         $project->description = $request->project_description;
+
+        $jsonMetadata = '{
+                      "transform_front": {
+                        "global": "translate(0px,0px) scale(1.0) rotate(0deg)",
+                        "x": 0,
+                        "y": 0,
+                        "zoom": 1,
+                        "degree": 0,
+                        "shapes": {}
+                      },
+                      "transform_profile": {
+                        "global": "translate(0px,0px) scale(1.0) rotate(0deg)",
+                        "x": 0,
+                        "y": 0,
+                        "zoom": 1,
+                        "degree": 0,
+                        "shapes": {}
+                      }
+                    }';
+
+        $project->metadata = utf8_encode($jsonMetadata);
+
         $project->save();
 
         return redirect('projects');
@@ -171,27 +193,6 @@ class ProjectController extends Controller
         $subject = $project->subject()->get()[0];
 
         $jsonMetadata = $project->metadata;
-        $jsonMetadataObj = json_decode($jsonMetadata);
-
-        if(!isset($jsonMetadataObj) || empty($jsonMetadataObj)){
-            $jsonMetadata = '{
-                      "transform_front": {
-                        "global": "translate(0px,0px) scale(1.0) rotate(0deg)",
-                        "x": 0,
-                        "y": 0,
-                        "zoom": 1,
-                        "degree": 0
-                      },
-                      "transform_profile": {
-                        "global": "translate(0px,0px) scale(1.0) rotate(0deg)",
-                        "x": 0,
-                        "y": 0,
-                        "zoom": 1,
-                        "degree": 0
-                      }
-                    }';
-        }
-
         $jsonMetadataObj = json_decode($jsonMetadata);
 
         if($type == 'front' || $type == 'all') {
@@ -317,16 +318,16 @@ class ProjectController extends Controller
         $prjMetadataFront = $prjMetadata->transform_front;
 
         //image x transl
-        $imageXFront = $prjMetadataFront->x;
+        $imageXFront = isset($prjMetadataFront->x) ? $prjMetadataFront->x : '0' ;
 
         //image y transl
-        $imageYFront = $prjMetadataFront->y;
+        $imageYFront = isset($prjMetadataFront->y) ? $prjMetadataFront->y : '0';
 
         //image zoom
-        $imageZoomFront = $prjMetadataFront->zoom;
+        $imageZoomFront = isset($prjMetadataFront->zoom) ? $prjMetadataFront->zoom : '1';
 
         //image zoom
-        $imageDegreeFront = $prjMetadataFront->degree;
+        $imageDegreeFront = isset($prjMetadataFront->degree) ? @$prjMetadataFront->degree : '0';
 
         $listShapeFront = [];
         if(isset($prjMetadataFront->shapes)) {
@@ -352,16 +353,16 @@ class ProjectController extends Controller
         $prjMetadataProfile = $prjMetadata->transform_profile;
 
         //image x transl
-        $imageXProfile = $prjMetadataFront->x;
+        $imageXProfile = isset($prjMetadataProfile->x) ? $prjMetadataProfile->x : '0';
 
         //image y transl
-        $imageYProfile = $prjMetadataFront->y;
+        $imageYProfile = isset($prjMetadataProfile->y) ? $prjMetadataProfile->y : '0';
 
         //image zoom
-        $imageZoomProfile = $prjMetadataFront->zoom;
+        $imageZoomProfile = isset($prjMetadataProfile->zoom) ? $prjMetadataProfile->zoom : '1';
 
         //image zoom
-        $imageDegreeProfile = $prjMetadataFront->degree;
+        $imageDegreeProfile = isset($prjMetadataProfile->degree) ? $prjMetadataProfile->degree : '0';
 
         $listShapeProfile = [];
         if(isset($prjMetadataProfile->shapes)) {

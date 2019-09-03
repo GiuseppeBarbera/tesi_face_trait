@@ -487,7 +487,7 @@ function createShape(shapeId, shapeInfo, event, type){
                     //coordinates respect image
                     leftProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#profile_img').offset().left;
                     topProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#profile_img').offset().top;
-                    leftProfile = leftFront * actualZoomProfile;
+                    leftProfile = leftProfile * actualZoomProfile;
                     topProfile = topProfile * actualZoomProfile;
                     listShapeProfile[id].left = leftProfile;
                     listShapeProfile[id].top = topProfile;
