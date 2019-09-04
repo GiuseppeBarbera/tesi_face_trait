@@ -281,13 +281,28 @@ class ProjectController extends Controller
             $pathImage = $subject->path_image_profile;
         }
 
-        foreach ($request->listShapes as $shape){
-            $pathShape = url(Morphology::find($shape['id_shape'])->path);
+        if(count($request->listShapes) <= 1){
+            return "To run Magic Check you should add at least 2 shape by type";
         }
 
+        $campareArray = [];
+        foreach ($request->listShapes as $shape){
+            $pathShape = url(Morphology::find($shape['id_shape'])->path);
+            $top = $shape['top'];
+            $left = $shape['left'];
+            $hightShape = $shape['h'];
+            $widthShape = $shape['w'];
+            $cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run $pathImage $pathShape $hightShape $widthShape $top $left";
+            $response = shell_exec ( $cmd);
+            //var_dump($response);
+            $response = explode("\n", $response)[0];
+            $compareArray[$shape['id_shape']] = floatval($response);
+            //return $response;
+        }
 
+        $maxMachtShapeId = array_keys($compareArray, min($compareArray));
 
-
+        return "Best match is: " . Morphology::find($shape['id_shape'])->description;
 
         //$cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run /Users/Peppe/Desktop/Tes/Img/Front.jpg /Users/Peppe/Desktop/Tes/Morfologie\ Modificate/Attaccatura\ dei\ capelli/Soggetti\ privi\ di\ \ Trichion/attaccatura_curvilinea.png";
         //$response = shell_exec ( $cmd);
