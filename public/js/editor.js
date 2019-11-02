@@ -154,12 +154,22 @@ $('#save_profile_metadata').on('click', function(event){
 
 //event fired when click check button
 $( ".magic_profile" ).click(function(event) {
-    onCheckMagicAction(this, event, 'profile', $(event.currentTarget).data('morph-type-id'));
+    html2canvas(document.querySelector("body")).then(canvas => {
+        newCanv = canvas;
+        canvasURL = canvas.toDataURL("image/png");
+        onCheckMagicAction(this, event, 'profile', $(event.currentTarget).data('morph-type-id'));
+    });
+
 });
 
 //event fired when click check button
 $( ".magic_front" ).click(function(event) {
-    onCheckMagicAction(this, event, 'front', $(event.currentTarget).data('morph-type-id'));
+    html2canvas(document.querySelector("body")).then(canvas => {
+        newCanv = canvas;
+        canvasURL = canvas.toDataURL("image/png");
+        onCheckMagicAction(this, event, 'front', $(event.currentTarget).data('morph-type-id'));
+    });
+
 });
 
 
@@ -397,10 +407,8 @@ function onCheckMagicAction(obj, event, type, morphTypeId){
         }
     }
 
-debugger;
-
     var data = {
-        'listShapes' : sendList, 'type' : type
+        'listShapes' : sendList, 'type' : type, 'screenshot' : canvasURL
     };
 
     $.ajax({
@@ -477,12 +485,22 @@ function createShape(shapeId, shapeInfo, event, type){
                     listShapeFront[id].y = yPos;
 
                     //coordinates respect image
-                    leftFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#front_img').offset().left;
-                    topFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#front_img').offset().top;
-                    leftFront = leftFront * actualZoomFront;
-                    topFront = topFront * actualZoomFront;
+                    //leftFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#front_img').offset().left;
+                    //topFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#front_img').offset().top;
+                    //leftFront = leftFront * actualZoomFront;
+                    //topFront = topFront * actualZoomFront;
+                    topFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().top;
+                    leftFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().left;
+
+                    sizeShape = $('#' + id).children('.shape').children('.ui-wrapper').width()
+                    sizeTop = $(document).height();
+                    sizeLeft = $(document).width();
+
                     listShapeFront[id].left = leftFront;
                     listShapeFront[id].top = topFront;
+                    listShapeFront[id].size_top = sizeTop;
+                    listShapeFront[id].size_left = sizeLeft;
+                    listShapeFront[id].size_shape = sizeShape;
                 }
             }else if(classes.includes('profile')){
                 if (listShapeProfile[id] != undefined) {
@@ -490,12 +508,22 @@ function createShape(shapeId, shapeInfo, event, type){
                     listShapeProfile[id].y = yPos;
 
                     //coordinates respect image
-                    leftProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#profile_img').offset().left;
-                    topProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#profile_img').offset().top;
-                    leftProfile = leftProfile * actualZoomProfile;
-                    topProfile = topProfile * actualZoomProfile;
+                    //leftProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#profile_img').offset().left;
+                    //topProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#profile_img').offset().top;
+                    //leftProfile = leftProfile * actualZoomProfile;
+                    //topProfile = topProfile * actualZoomProfile;
+                    topProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().top;
+                    leftProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().left;
+
+                    sizeShape = $('#' + id).children('.shape').children('.ui-wrapper').width()
+                    sizeTop = $(document).height();
+                    sizeLeft = $(document).width();
+
                     listShapeProfile[id].left = leftProfile;
                     listShapeProfile[id].top = topProfile;
+                    listShapeProfile[id].size_top = sizeTop;
+                    listShapeProfile[id].size_left = sizeLeft;
+                    listShapeProfile[id].size_shape = sizeShape;
                 }
             }
 
@@ -589,14 +617,19 @@ function createShape(shapeId, shapeInfo, event, type){
         var linkedTo = shapeInfo.linked_to;
         var description = shapeInfo.description;
     }
-debugger;
+
     if(type == 'front') {
 
         //coordinates respect image
-        leftFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#front_img').offset().left * actualZoomFront;
-        topFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#front_img').offset().top * actualZoomFront;
+        //leftFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#front_img').offset().left * actualZoomFront;
+        //topFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#front_img').offset().top * actualZoomFront;
+        topFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().top;
+        leftFront = $('#' + id).children('.shape').children('.ui-wrapper').offset().left;
+        sizeShape = $('#' + id).children('.shape').children('.ui-wrapper').width()
+        sizeTop = $(document).height();
+        sizeLeft = $(document).width();
 
-        listShapeFront[id] = {x: xPos, y: yPos, degree: parseFloat(degree), h: h, w: w, id_shape: idShape, morph_type_id : morphTypeId, linked_to : linkedTo, morph_id : morphId, left : leftFront, top : topFront};
+        listShapeFront[id] = {x: xPos, y: yPos, degree: parseFloat(degree), h: h, w: w, id_shape: idShape, morph_type_id : morphTypeId, linked_to : linkedTo, morph_id : morphId, left : leftFront, top : topFront, size_shape : sizeShape, size_top : sizeTop, size_left : sizeLeft};
 
         var count = listShapeFrontByType[morphTypeId] != undefined && listShapeFrontByType[morphTypeId].count != undefined ? listShapeFrontByType[morphTypeId].count +1 : 1;
         if(listShapeFrontByType[morphTypeId] == undefined){
@@ -609,10 +642,14 @@ debugger;
         listShapeFrontByType[morphTypeId].count = count;
     }else if(type == 'profile'){
         //coordinates respect image
-        leftProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#profile_img').offset().left * actualZoomProfile;
-        topProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#profile_img').offset().top * actualZoomProfile;
-
-        listShapeProfile[id] = {x: xPos, y: yPos, degree: parseFloat(degree), h: h, w: w, id_shape: idShape, morph_type_id : morphTypeId, linked_to : linkedTo, morph_id : morphId, left : leftProfile, top : topProfile};
+        //leftProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().left - $('#profile_img').offset().left * actualZoomProfile;
+        //topProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().top - $('#profile_img').offset().top * actualZoomProfile;
+        topProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().top;
+        leftProfile = $('#' + id).children('.shape').children('.ui-wrapper').offset().left;
+        sizeShape = $('#' + id).children('.shape').children('.ui-wrapper').width()
+        sizeTop = $(document).height();
+        sizeLeft = $(document).width();
+        listShapeProfile[id] = {x: xPos, y: yPos, degree: parseFloat(degree), h: h, w: w, id_shape: idShape, morph_type_id : morphTypeId, linked_to : linkedTo, morph_id : morphId, left : leftProfile, top : topProfile, size_shape : sizeShape, size_top : sizeTop, size_left : sizeLeft};
 
         var count = listShapeProfileByType[morphTypeId] != undefined && listShapeProfileByType[morphTypeId].count != undefined  ? listShapeProfileByType[morphTypeId].count +1 : 1;
         if(listShapeProfileByType[morphTypeId] == undefined){

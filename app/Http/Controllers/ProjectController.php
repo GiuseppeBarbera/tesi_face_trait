@@ -281,6 +281,18 @@ class ProjectController extends Controller
             $pathImage = $subject->path_image_profile;
         }
 
+        //get base64 image
+        $base64_image = $request->screenshot;
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64_image)) {
+            $data = substr($base64_image, strpos($base64_image, ',') + 1);
+
+            $data = base64_decode($data);
+            $new_name = rand();
+            $pathScreenshot = Storage::disk('public')->put('photos/' . $new_name, $data);
+            $pathScreenshot = Storage::disk('photos')->getDriver()->getConfig()->get('url') . $new_name;
+
+        }
+
         if(count($request->listShapes) <= 1){
             return "To run Magic Check you should add at least 2 shape by type";
         }
@@ -292,7 +304,9 @@ class ProjectController extends Controller
             $left = $shape['left'];
             $hightShape = $shape['h'];
             $widthShape = $shape['w'];
-            $cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run $pathImage $pathShape $hightShape $widthShape $top $left";
+            $sizeTop = $shape['size_top'];
+            $sizeLeft = $shape['size_left'];
+            $cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run $pathImage $pathShape $hightShape $widthShape $top $left $pathScreenshot $sizeTop $sizeLeft";
             $response = shell_exec ( $cmd);
             //var_dump($response);
             $response = explode("\n", $response)[0];
