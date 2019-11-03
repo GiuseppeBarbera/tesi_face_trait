@@ -155,9 +155,21 @@ $('#save_profile_metadata').on('click', function(event){
 //event fired when click check button
 $( ".magic_profile" ).click(function(event) {
     html2canvas(document.querySelector("body")).then(canvas => {
+        //hide icon and border
+        $('.img-shape').css('border', 'none');
+        $('.fas').css('visibility', 'hidded');
+        $('.ui-rotatable-handle').css('visibility', 'hidden');
+
+        //create screenshot
         newCanv = canvas;
         canvasURL = canvas.toDataURL("image/png");
         onCheckMagicAction(this, event, 'profile', $(event.currentTarget).data('morph-type-id'));
+
+        //re-show icon and border
+        $('.img-shape').css('border', 'solid');
+        $('.fas').css('visibility', 'visible');
+        $('.ui-rotatable-handle').css('visibility', 'visible');
+
     });
 
 });

@@ -306,17 +306,18 @@ class ProjectController extends Controller
             $widthShape = $shape['w'];
             $sizeTop = $shape['size_top'];
             $sizeLeft = $shape['size_left'];
-            $cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run $pathImage $pathShape $hightShape $widthShape $top $left $pathScreenshot $sizeTop $sizeLeft";
-            $response = shell_exec ( $cmd);
+            $cmd2 = "python " . base_path() . "/script/shapeComparison/shapeComparison.py $pathScreenshot $pathShape $hightShape $top $left $sizeLeft $sizeTop 2>&1";
+            $cmd = "sh " . base_path() . "/script/shapeComparison/wrapper.sh $cmd2";
+            $response = exec ($cmd, $output, $retCode);
             //var_dump($response);
             $response = explode("\n", $response)[0];
             $compareArray[$shape['id_shape']] = floatval($response);
             //return $response;
         }
 
-        $maxMachtShapeId = array_keys($compareArray, min($compareArray));
+        $maxMachtShapeId = array_keys($compareArray, min($compareArray))[0];
 
-        return "Best match is: " . Morphology::find($shape['id_shape'])->description;
+        return "Best match is: " . Morphology::find($maxMachtShapeId)->description;
 
         //$cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run /Users/Peppe/Desktop/Tes/Img/Front.jpg /Users/Peppe/Desktop/Tes/Morfologie\ Modificate/Attaccatura\ dei\ capelli/Soggetti\ privi\ di\ \ Trichion/attaccatura_curvilinea.png";
         //$response = shell_exec ( $cmd);

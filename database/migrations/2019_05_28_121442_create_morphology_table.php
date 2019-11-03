@@ -20,7 +20,7 @@ class CreateMorphologyTable extends Migration
             $table->char('path', 100);
 
             //references
-            $table->foreign('id_morphology_type')->references('id')->on('morphology');
+            $table->foreign('id_morphology_type')->references('id')->on('morphology_type');
         });
     }
 
