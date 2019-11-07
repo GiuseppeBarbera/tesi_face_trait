@@ -198,7 +198,7 @@ class ProjectController extends Controller
         if($type == 'front' || $type == 'all') {
             $jsonMetadataObjTransform = $jsonMetadataObj->transform_front;
 
-            if(!isset($jsonMetadataObj->transform_profile)){
+            if(!isset($jsonMetadataObj->transform_front)){
                 $jsonMetadataObjTransform = new \stdClass();
             }
 
@@ -297,7 +297,7 @@ class ProjectController extends Controller
             return "To run Magic Check you should add at least 2 shape by type";
         }
 
-        $campareArray = [];
+        $compareArray = [];
         foreach ($request->listShapes as $shape){
             $pathShape = url(Morphology::find($shape['id_shape'])->path);
             $top = $shape['top'];
@@ -445,8 +445,8 @@ class ProjectController extends Controller
         $pdf = PDF::loadView('report', $data);
         return $pdf->download('medium.pdf');
 
-
     }
+
 
 
 }
