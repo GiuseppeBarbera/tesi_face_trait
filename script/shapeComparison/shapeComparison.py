@@ -35,9 +35,9 @@ def main():
     dim = (width, height)
 
     img_html_resized = cv2.resize(img_html,dim)
-    morf_resized = cv2.resize(morf,(sys.argv[3],sys.argv[3]))
+    morf_resized = cv2.resize(morf,(int(sys.argv[3]),int(sys.argv[3])))
    
-    cropped = img_html_resized[top:top+sys.argv[3], left:left+sys.argv[3]]
+    cropped = img_html_resized[top:top+int(sys.argv[3]), left:left+int(sys.argv[3])]
 
     result = automatic_comparison(cropped, morf_resized)
 

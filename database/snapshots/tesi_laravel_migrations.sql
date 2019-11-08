@@ -1,9 +1,0 @@
-INSERT INTO tesi_laravel.migrations (id, migration, batch) VALUES (1, '2014_10_12_000000_create_users_table', 1);
-INSERT INTO tesi_laravel.migrations (id, migration, batch) VALUES (2, '2014_10_12_100000_create_password_resets_table', 1);
-INSERT INTO tesi_laravel.migrations (id, migration, batch) VALUES (3, '2019_05_28_121359_create_morphology_type_table', 1);
-INSERT INTO tesi_laravel.migrations (id, migration, batch) VALUES (4, '2019_05_28_121442_create_morphology_table', 1);
-INSERT INTO tesi_laravel.migrations (id, migration, batch) VALUES (5, '2019_05_28_121520_create_subject_table', 1);
-INSERT INTO tesi_laravel.migrations (id, migration, batch) VALUES (6, '2019_05_28_121523_create_image_type_table', 1);
-INSERT INTO tesi_laravel.migrations (id, migration, batch) VALUES (7, '2019_05_28_121526_create_image_subject_table', 1);
-INSERT INTO tesi_laravel.migrations (id, migration, batch) VALUES (8, '2019_05_28_121550_create_project_table', 1);
-INSERT INTO tesi_laravel.migrations (id, migration, batch) VALUES (9, '2019_05_28_182903_create_peppe_table', 1);

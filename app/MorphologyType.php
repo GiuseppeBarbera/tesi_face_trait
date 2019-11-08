@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MorphologyType extends Model
 {
     protected $table = 'morphology_type';
+    public $timestamps = false;
 
     public function morphology()
     {
