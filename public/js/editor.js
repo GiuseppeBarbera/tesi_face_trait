@@ -166,7 +166,7 @@ $( ".magic_profile" ).click(function(event) {
         onCheckMagicAction(this, event, 'profile', $(event.currentTarget).data('morph-type-id'));
 
         //re-show icon and border
-        $('.img-shape').css('border', 'solid');
+        $('.img-shape').css('border', '1px solid');
         $('.fas').css('visibility', 'visible');
         $('.ui-rotatable-handle').css('visibility', 'visible');
 
@@ -176,11 +176,22 @@ $( ".magic_profile" ).click(function(event) {
 
 //event fired when click check button
 $( ".magic_front" ).click(function(event) {
+
+    //hide icon and border
+    $('.img-shape').css('border', 'none');
+    $('.fas').css('visibility', 'hidded');
+    $('.ui-rotatable-handle').css('visibility', 'hidden');
+
     html2canvas(document.querySelector("body")).then(canvas => {
         newCanv = canvas;
         canvasURL = canvas.toDataURL("image/png");
         onCheckMagicAction(this, event, 'front', $(event.currentTarget).data('morph-type-id'));
     });
+
+    //re-show icon and border
+    $('.img-shape').css('border', '1px solid');
+    $('.fas').css('visibility', 'visible');
+    $('.ui-rotatable-handle').css('visibility', 'visible');
 
 });
 
@@ -418,10 +429,11 @@ function onCheckMagicAction(obj, event, type, morphTypeId){
             }
         }
     }
-
+    //package sent to server
     var data = {
         'listShapes' : sendList, 'type' : type, 'screenshot' : canvasURL
     };
+
 
     $.ajax({
         url:"../../check/" + idProject,
@@ -431,7 +443,8 @@ function onCheckMagicAction(obj, event, type, morphTypeId){
         contentType: 'application/json',
         success:function(data)
         {
-            alert(data);
+            alert(data.stringres);
+            colorMatch(data.id_match);
         }
     })
 }
@@ -694,4 +707,11 @@ function deleteShape(event, type) {
         delete listShapeProfileByType[morphTypeId][morphId];
         listShapeProfileByType[morphTypeId].count = listShapeProfileByType[morphTypeId].count -1;
     }
+}
+
+function colorMatch(id){
+   // var elementMatch = $('#' + id.shape img-shape ui-resizable).find("img");
+    debugger; //[data-morph-id='43']
+    var elementMatch = $("[data-morph-id='" + id + "']").find("img");
+    elementMatch.css("border-color","red");
 }

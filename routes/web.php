@@ -37,7 +37,7 @@ Route::get('projects/{id}/metadata/{type}', 'ProjectController@getMetadata')->mi
 Route::post('projects/{id}/save/{type}', 'ProjectController@saveMetadata')->middleware('auth');
 
 
-Route::get('addMorphology', 'ProjectController@myScript');
+//Route::get('addMorphology', 'ProjectController@myScript');
 
 Route::post('check/{id}','ProjectController@magicCheck');
 

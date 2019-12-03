@@ -183,6 +183,7 @@ class ProjectController extends Controller
                 'message'   => $validation->errors()->all(),
                 'error'   => $validation->errors()->all()
             ]);
+
         }
     }
 
@@ -317,7 +318,11 @@ class ProjectController extends Controller
 
         $maxMachtShapeId = array_keys($compareArray, min($compareArray))[0];
 
-        return "Best match is: " . Morphology::find($maxMachtShapeId)->description;
+        $stringres = "Best match is: " . Morphology::find($maxMachtShapeId)->description;
+        return response()->json([
+            'stringres' => $stringres,
+            'id_match' => $maxMachtShapeId
+        ]);
 
         //$cmd = "/usr/local/bin/processing-java --sketch=" . base_path() . "/script/shapeComparison/ --run /Users/Peppe/Desktop/Tes/Img/Front.jpg /Users/Peppe/Desktop/Tes/Morfologie\ Modificate/Attaccatura\ dei\ capelli/Soggetti\ privi\ di\ \ Trichion/attaccatura_curvilinea.png";
         //$response = shell_exec ( $cmd);
